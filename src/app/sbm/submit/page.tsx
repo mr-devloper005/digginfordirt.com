@@ -3,9 +3,8 @@
 import { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { Sparkles } from 'lucide-react'
-import { NavbarShell } from '@/components/shared/navbar-shell'
-import { Footer } from '@/components/shared/footer'
+import { Sparkles, NotebookTabs } from 'lucide-react'
+import { PageShell } from '@/components/shared/page-shell'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -110,65 +109,65 @@ export default function SubmitBookmarkPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <NavbarShell />
-
-      <main>
-        <section className="border-b border-border bg-secondary/30">
-          <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Sparkles className="h-4 w-4 text-accent" />
-              Submit a Bookmark
-            </div>
-            <h1 className="mt-2 text-3xl font-bold text-foreground">Share a link with the community.</h1>
-            <p className="mt-2 text-muted-foreground">
-              Add a short description, pick a category, and tag it for easy discovery.
-            </p>
+    <PageShell
+      title="Submit a Bookmark"
+      description="Share a useful link with a short note, clean categorization, and tags that keep it easy to rediscover."
+      actions={<div className="archive-kicker"><Sparkles className="h-3.5 w-3.5" />Archive submission</div>}
+    >
+      <div className="mb-6 grid gap-3 sm:grid-cols-3">
+        {[
+          ['Why submit', 'Turn one-off finds into reusable archive entries'],
+          ['Best format', 'Short title, clear note, focused category, useful tags'],
+          ['Same behavior', 'Submission still uses the existing bookmark flow and storage'],
+        ].map(([label, value]) => (
+          <div key={label} className="archive-stat rounded-[1.6rem] p-4">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#7380a0]">{label}</p>
+            <p className="mt-2 text-sm text-[#21283f]">{value}</p>
           </div>
-        </section>
+        ))}
+      </div>
 
-        <section className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
-          <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
+      <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="rounded-xl border border-border bg-card p-6"
+              className="archive-panel rounded-[2rem] p-6"
             >
               <form
                 className="space-y-5"
                 onSubmit={handleSubmit}
               >
                 <div>
-                  <label className="text-sm font-medium text-foreground">URL</label>
+                  <label className="text-sm font-medium text-[#21283f]">URL</label>
                   <Input
                     placeholder="https://"
-                    className="mt-2"
+                    className="archive-input mt-2"
                     value={url}
                     onChange={(event) => setUrl(event.target.value)}
                   />
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-foreground">Title</label>
+                  <label className="text-sm font-medium text-[#21283f]">Title</label>
                   <Input
                     placeholder="Give this link a clear title"
-                    className="mt-2"
+                    className="archive-input mt-2"
                     value={title}
                     onChange={(event) => setTitle(event.target.value)}
                   />
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-foreground">Description</label>
+                  <label className="text-sm font-medium text-[#21283f]">Description</label>
                   <Textarea
                     placeholder="Why is this link useful?"
-                    className="mt-2 min-h-[140px]"
+                    className="archive-input mt-2 min-h-[140px]"
                     value={description}
                     onChange={(event) => setDescription(event.target.value)}
                   />
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-foreground">Category</label>
+                  <label className="text-sm font-medium text-[#21283f]">Category</label>
                   <Select value={category} onValueChange={setCategory}>
-                    <SelectTrigger className="mt-2">
+                    <SelectTrigger className="archive-input mt-2">
                       <SelectValue placeholder="Choose a category" />
                     </SelectTrigger>
                     <SelectContent>
@@ -181,26 +180,27 @@ export default function SubmitBookmarkPage() {
                   </Select>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-foreground">Tags</label>
+                  <label className="text-sm font-medium text-[#21283f]">Tags</label>
                   <Input
                     placeholder="Add tags separated by commas"
-                    className="mt-2"
+                    className="archive-input mt-2"
                     value={tagsInput}
                     onChange={(event) => setTagsInput(event.target.value)}
                   />
                   <div className="mt-3 flex flex-wrap gap-2">
                     {['Design', 'Productivity', 'AI', 'Frontend', 'Research'].map((tag) => (
-                      <Badge key={tag} variant="outline" className="text-xs">
+                      <Badge key={tag} variant="outline" className="border-[rgba(80,96,136,0.12)] bg-white/70 text-xs text-[#53607f]">
                         {tag}
                       </Badge>
                     ))}
                   </div>
                 </div>
                 <div className="flex flex-wrap items-center gap-3">
-                  <Button type="submit">Submit Bookmark</Button>
+                  <Button type="submit" className="rounded-full bg-[#21283f] text-white hover:bg-[#334264]">Submit Bookmark</Button>
                   <Button
                     type="button"
                     variant="outline"
+                    className="archive-button-soft rounded-full"
                     onClick={() => {
                       setStatusMessage('Draft saved locally.')
                       toast({
@@ -213,32 +213,39 @@ export default function SubmitBookmarkPage() {
                   </Button>
                 </div>
                 {statusMessage && (
-                  <p className="text-sm text-muted-foreground">{statusMessage}</p>
+                  <p className="text-sm text-[#53607f]">{statusMessage}</p>
                 )}
               </form>
             </motion.div>
 
             <div className="space-y-6">
-              <div className="rounded-xl border border-border bg-secondary/30 p-5">
-                <h3 className="text-base font-semibold text-foreground">Submission Tips</h3>
-                <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
+              <div className="curation-note rounded-[1.8rem] p-5">
+                <div className="archive-chip">
+                  <NotebookTabs className="h-3.5 w-3.5" />
+                  Submission tips
+                </div>
+                <ul className="mt-4 space-y-2 text-sm text-[#53607f]">
                   <li>Keep titles short and descriptive.</li>
                   <li>Explain the main takeaway in one sentence.</li>
                   <li>Add 3-5 tags to improve discoverability.</li>
                 </ul>
               </div>
-              <div className="rounded-xl border border-border bg-card p-5">
-                <h4 className="text-sm font-semibold text-foreground">Preview Checklist</h4>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  Once submitted, your link will appear in Trending or Latest based on community votes.
+              <div className="archive-panel rounded-[1.8rem] p-5">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#7380a0]">Good entry example</p>
+                <div className="mt-4 space-y-3 text-sm text-[#53607f]">
+                  <p><span className="font-semibold text-[#21283f]">Title:</span> Practical UI motion reference library</p>
+                  <p><span className="font-semibold text-[#21283f]">Description:</span> A solid archive of lightweight interface transitions with production-friendly examples.</p>
+                  <p><span className="font-semibold text-[#21283f]">Tags:</span> motion, ui, frontend, inspiration</p>
+                </div>
+              </div>
+              <div className="archive-panel-muted rounded-[1.8rem] p-5">
+                <h4 className="text-sm font-semibold text-[#21283f]">Preview checklist</h4>
+                <p className="mt-2 text-sm text-[#53607f]">
+                  Once submitted, your link will appear in the existing bookmarking system without changing any underlying logic.
                 </p>
               </div>
             </div>
-          </div>
-        </section>
-      </main>
-
-      <Footer />
-    </div>
+      </div>
+    </PageShell>
   )
 }
