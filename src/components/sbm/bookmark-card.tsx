@@ -1,10 +1,9 @@
 ﻿'use client'
 
 import { useEffect, useState } from 'react'
-import Image from 'next/image'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { ArrowUpRight, ArrowUp, Bookmark, MessageSquare, Share2, Clock, Check } from 'lucide-react'
+import { ArrowUpRight, ArrowUp, Bookmark, MessageSquare, Share2, Clock, Check, Globe2, Tag } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -89,33 +88,34 @@ export function BookmarkCard({
 
   return (
     <motion.div whileHover={{ y: -4 }} transition={{ duration: 0.2 }}>
-      <Card className="group h-full overflow-hidden border-border bg-card transition-all hover:border-muted-foreground/20">
+      <Card className="curation-note group h-full overflow-hidden border-[rgba(80,96,136,0.12)] bg-transparent transition-all hover:border-[rgba(80,96,136,0.2)]">
         <Link href={`/sbm/${bookmark.slug}`} className="block">
-          <div className={cn('relative overflow-hidden', compact ? 'aspect-[4/3]' : 'aspect-[16/9]')}>
-            <Image
-              src={bookmark.image}
-              alt={bookmark.title}
-              fill
-              className="object-cover transition-transform duration-300 group-hover:scale-105"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-            <div className="absolute left-3 top-3 flex items-center gap-2">
-              <Badge className="bg-background/90 text-foreground">
-                {bookmark.category}
-              </Badge>
-              <Badge variant="secondary" className="bg-black/60 text-white">
-                {bookmark.domain}
-              </Badge>
+          <div className="archive-grid border-b border-[rgba(80,96,136,0.1)] p-5">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex min-w-0 flex-wrap items-center gap-2">
+                <Badge className="bg-[#2f3d63] text-white">
+                  <Tag className="mr-1 h-3.5 w-3.5" />
+                  {bookmark.category}
+                </Badge>
+                <Badge variant="secondary" className="border border-[rgba(80,96,136,0.12)] bg-white/70 text-[#53607f]">
+                  <Globe2 className="mr-1 h-3.5 w-3.5" />
+                  {bookmark.domain}
+                </Badge>
+              </div>
+              <div className="rounded-full border border-[rgba(80,96,136,0.12)] bg-white/76 p-2 text-[#53607f] transition group-hover:bg-[#2f3d63] group-hover:text-white">
+                <ArrowUpRight className="h-4 w-4" />
+              </div>
             </div>
-            <div className="absolute bottom-3 left-3 flex items-center gap-2 text-xs text-white">
-              <Clock className="h-3 w-3" />
-              <span suppressHydrationWarning>
-                {mounted ? formatDistanceToNow(new Date(bookmark.createdAt), { addSuffix: true }) : 'Just now'}
-              </span>
-            </div>
-            <div className="absolute bottom-3 right-3 flex items-center gap-2 text-xs text-white">
-              <ArrowUpRight className="h-4 w-4" />
-              <span>Open</span>
+            <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto]">
+              <div className="archive-panel-muted rounded-[1.3rem] p-4 text-sm leading-6 text-[#53607f]">
+                {bookmark.description}
+              </div>
+              <div className="archive-panel-muted flex min-w-[100px] flex-col justify-between rounded-[1.3rem] p-4 text-right text-xs text-[#7380a0]">
+                <span className="font-semibold uppercase tracking-[0.18em]">Saved</span>
+                <span suppressHydrationWarning className="text-sm font-medium text-[#21283f]">
+                  {mounted ? formatDistanceToNow(new Date(bookmark.createdAt), { addSuffix: true }) : 'Just now'}
+                </span>
+              </div>
             </div>
           </div>
         </Link>
@@ -126,25 +126,25 @@ export function BookmarkCard({
               <AvatarImage src={author.avatar} alt={author.name} />
               <AvatarFallback>{author.name.charAt(0)}</AvatarFallback>
             </Avatar>
-            <div className="text-sm text-muted-foreground">
-              <span className="font-medium text-foreground">{author.name}</span>
+            <div className="text-sm text-[#53607f]">
+              <span className="font-medium text-[#21283f]">{author.name}</span>
               <span className="mx-2">•</span>
               <span>{bookmark.domain}</span>
             </div>
           </div>
 
           <Link href={`/sbm/${bookmark.slug}`}>
-            <h3 className={cn('mb-2 font-semibold leading-tight text-foreground', compact ? 'text-base' : 'text-lg')}>
+            <h3 className={cn('mb-2 font-semibold leading-tight text-[#21283f]', compact ? 'text-base' : 'text-lg')}>
               {bookmark.title}
             </h3>
           </Link>
-          <p className={cn('mb-4 text-sm text-muted-foreground', compact ? 'line-clamp-2' : 'line-clamp-3')}>
+          <p className={cn('mb-4 text-sm text-[#53607f]', compact ? 'line-clamp-2' : 'line-clamp-3')}>
             {bookmark.description}
           </p>
 
           <div className="flex flex-wrap gap-2">
             {bookmark.tags.slice(0, compact ? 2 : 4).map((tag) => (
-              <Badge key={tag} variant="outline" className="text-xs">
+              <Badge key={tag} variant="outline" className="border-[rgba(80,96,136,0.12)] bg-white/70 text-xs text-[#53607f]">
                 {tag}
               </Badge>
             ))}

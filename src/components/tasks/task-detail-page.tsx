@@ -248,13 +248,16 @@ export async function TaskDetailPage({ task, slug }: { task: TaskKey; slug: stri
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className={isBookmark ? 'archive-shell min-h-screen' : 'min-h-screen bg-background'}>
       <NavbarShell />
       <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <SchemaJsonLd data={schemaPayload} />
         <Link
           href={taskConfig?.route || "/"}
-          className="mb-6 inline-flex items-center text-sm text-muted-foreground hover:text-foreground"
+          className={cn(
+            'mb-6 inline-flex items-center text-sm hover:text-foreground',
+            isBookmark ? 'rounded-full border border-[rgba(80,96,136,0.12)] bg-white/80 px-4 py-2 text-[#53607f]' : 'text-muted-foreground'
+          )}
         >
           ← Back to {taskConfig?.label || "posts"}
         </Link>
@@ -316,22 +319,99 @@ export async function TaskDetailPage({ task, slug }: { task: TaskKey; slug: stri
                   </div>
                 ) : null}
 
-                <div className={cn(isClassified ? "mx-auto w-full max-w-4xl" : "mt-6")}>
-                  <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-                    <Badge variant="secondary" className="inline-flex items-center gap-1">
-                      <Tag className="h-3.5 w-3.5" />
-                      {category}
-                    </Badge>
-                    {location && (
-                      <span className="inline-flex items-center gap-1">
-                        <MapPin className="h-4 w-4" />
-                        {location}
-                      </span>
-                    )}
+                {isBookmark ? (
+                  <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+                    <div className="curation-note rounded-[2.2rem] p-7">
+                      <div className="flex flex-wrap items-center gap-3 text-sm text-[#5f6b8c]">
+                        <Badge className="inline-flex items-center gap-1 bg-[#2f3d63] text-white">
+                          <Tag className="h-3.5 w-3.5" />
+                          {category}
+                        </Badge>
+                        {location ? (
+                          <span className="inline-flex items-center gap-1">
+                            <MapPin className="h-4 w-4" />
+                            {location}
+                          </span>
+                        ) : null}
+                        {content.website ? (
+                          <a href={content.website} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[#36446c] hover:underline">
+                            <Globe className="h-4 w-4" />
+                            Visit source
+                          </a>
+                        ) : null}
+                      </div>
+                      <h1 className="mt-5 text-4xl font-semibold tracking-[-0.05em] text-[#21283f] sm:text-5xl">{post.title}</h1>
+                      {postTags.length ? (
+                        <div className="mt-6 flex flex-wrap gap-2">
+                          {postTags.map((tag) => (
+                            <Badge key={tag} variant="outline" className="rounded-full border-[rgba(80,96,136,0.14)] bg-white/78 px-3 py-1 text-[#51607f]">
+                              {tag}
+                            </Badge>
+                          ))}
+                        </div>
+                      ) : null}
+                      <RichContent html={descriptionHtml} className="article-content mt-6 max-w-3xl text-[#53607f]" />
+                    </div>
+
+                    <div className="space-y-5">
+                      <div className="curation-panel rounded-[2rem] p-6">
+                        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#7380a0]">Archive note</p>
+                        <p className="mt-3 text-sm leading-7 text-[#53607f]">This bookmark keeps the same underlying data and route behavior, but the page is framed like a saved research card rather than a generic content detail screen.</p>
+                      </div>
+                      <div className="curation-panel rounded-[2rem] p-6">
+                        <h2 className="text-lg font-semibold text-[#21283f]">Link details</h2>
+                        <div className="mt-4 space-y-3 text-sm text-[#53607f]">
+                          {content.website ? (
+                            <div className="flex items-start gap-2">
+                              <Globe className="mt-0.5 h-4 w-4" />
+                              <a href={content.website} className="break-all text-[#21283f] hover:underline" target="_blank" rel="noreferrer">
+                                {content.website}
+                              </a>
+                            </div>
+                          ) : null}
+                          {content.email ? (
+                            <div className="flex items-start gap-2">
+                              <Mail className="mt-0.5 h-4 w-4" />
+                              <a href={`mailto:${content.email}`} className="break-all text-[#28314d] hover:underline">
+                                {content.email}
+                              </a>
+                            </div>
+                          ) : null}
+                          {location ? (
+                            <div className="flex items-start gap-2">
+                              <MapPin className="mt-0.5 h-4 w-4" />
+                              <span>{location}</span>
+                            </div>
+                          ) : null}
+                        </div>
+                        {content.website ? (
+                          <Button className="mt-5 w-full rounded-full bg-[#21283f] text-white hover:bg-[#334264]" asChild>
+                            <a href={content.website} target="_blank" rel="noreferrer">
+                              Visit source
+                            </a>
+                          </Button>
+                        ) : null}
+                      </div>
+                    </div>
                   </div>
-                  <h1 className="mt-4 text-3xl font-semibold text-foreground">{post.title}</h1>
-                  <RichContent html={descriptionHtml} className="mt-3 max-w-3xl" />
-                </div>
+                ) : (
+                  <div className={cn(isClassified ? "mx-auto w-full max-w-4xl" : "mt-6")}>
+                    <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+                      <Badge variant="secondary" className="inline-flex items-center gap-1">
+                        <Tag className="h-3.5 w-3.5" />
+                        {category}
+                      </Badge>
+                      {location && (
+                        <span className="inline-flex items-center gap-1">
+                          <MapPin className="h-4 w-4" />
+                          {location}
+                        </span>
+                      )}
+                    </div>
+                    <h1 className="mt-4 text-3xl font-semibold text-foreground">{post.title}</h1>
+                    <RichContent html={descriptionHtml} className="mt-3 max-w-3xl" />
+                  </div>
+                )}
               </>
             ) : null}
 
@@ -479,13 +559,13 @@ export async function TaskDetailPage({ task, slug }: { task: TaskKey; slug: stri
           {related.length ? (
             <>
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-foreground">
+              <h2 className={cn('text-xl font-semibold', isBookmark ? 'text-[#21283f]' : 'text-foreground')}>
                 More in {category}
               </h2>
               {taskConfig?.route && (
                 <Link
                   href={taskConfig.route}
-                  className="text-sm text-muted-foreground hover:text-foreground"
+                  className={cn('text-sm hover:text-foreground', isBookmark ? 'text-[#53607f]' : 'text-muted-foreground')}
                 >
                   View all
                 </Link>
@@ -502,14 +582,14 @@ export async function TaskDetailPage({ task, slug }: { task: TaskKey; slug: stri
             </div>
             </>
           ) : null}
-          <nav className="mt-6 rounded-2xl border border-border bg-card/60 p-4">
-            <p className="text-sm font-semibold text-foreground">Related links</p>
+          <nav className={cn('mt-6 rounded-2xl p-4', isBookmark ? 'curation-panel border-[rgba(80,96,136,0.12)]' : 'border border-border bg-card/60')}>
+            <p className={cn('text-sm font-semibold', isBookmark ? 'text-[#21283f]' : 'text-foreground')}>Related links</p>
             <ul className="mt-2 space-y-2 text-sm">
               {related.map((item) => (
                 <li key={`link-${item.id}`}>
                   <Link
                     href={buildPostUrl(task, item.slug)}
-                    className="text-primary underline-offset-4 hover:underline"
+                    className={cn('underline-offset-4 hover:underline', isBookmark ? 'text-[#3d4d77]' : 'text-primary')}
                   >
                     {item.title}
                   </Link>
@@ -519,7 +599,7 @@ export async function TaskDetailPage({ task, slug }: { task: TaskKey; slug: stri
                 <li>
                   <Link
                     href={taskConfig.route}
-                    className="text-primary underline-offset-4 hover:underline"
+                    className={cn('underline-offset-4 hover:underline', isBookmark ? 'text-[#3d4d77]' : 'text-primary')}
                   >
                     Browse all {taskConfig.label}
                   </Link>
@@ -528,7 +608,7 @@ export async function TaskDetailPage({ task, slug }: { task: TaskKey; slug: stri
               <li>
                 <Link
                   href={`/search?q=${encodeURIComponent(category)}`}
-                  className="text-primary underline-offset-4 hover:underline"
+                  className={cn('underline-offset-4 hover:underline', isBookmark ? 'text-[#3d4d77]' : 'text-primary')}
                 >
                   Search more in {category}
                 </Link>

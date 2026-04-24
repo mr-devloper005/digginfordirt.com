@@ -1,10 +1,16 @@
+ 'use client'
+
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Bookmark, Building2, FileText, Image as ImageIcon, Sparkles } from 'lucide-react'
 import { NavbarShell } from '@/components/shared/navbar-shell'
 import { Footer } from '@/components/shared/footer'
 import { getFactoryState } from '@/design/factory/get-factory-state'
 import { getProductKind } from '@/design/factory/get-product-kind'
 import { LOGIN_PAGE_OVERRIDE_ENABLED, LoginPageOverride } from '@/overrides/login-page'
+import { useAuth } from '@/lib/auth-context'
+import { useToast } from '@/components/ui/use-toast'
 
 function getLoginConfig(kind: ReturnType<typeof getProductKind>) {
   if (kind === 'directory') {
@@ -60,10 +66,43 @@ export default function LoginPage() {
     return <LoginPageOverride />
   }
 
+  const router = useRouter()
+  const { toast } = useToast()
+  const { login, isLoading, isAuthenticated } = useAuth()
   const { recipe } = getFactoryState()
   const productKind = getProductKind(recipe)
   const config = getLoginConfig(productKind)
   const Icon = config.icon
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push('/dashboard')
+    }
+  }, [isAuthenticated, router])
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    setError('')
+
+    if (!email.trim() || !password.trim()) {
+      setError('Enter your email and password to continue.')
+      return
+    }
+
+    try {
+      await login(email.trim(), password)
+      toast({
+        title: 'Signed in',
+        description: 'Welcome back to your workspace.',
+      })
+      router.push('/dashboard')
+    } catch {
+      setError('Unable to sign in right now. Please try again.')
+    }
+  }
 
   return (
     <div className={`min-h-screen ${config.shell}`}>
@@ -83,10 +122,27 @@ export default function LoginPage() {
 
           <div className={`rounded-[2rem] p-8 ${config.panel}`}>
             <p className="text-xs font-semibold uppercase tracking-[0.24em] opacity-70">Welcome back</p>
-            <form className="mt-6 grid gap-4">
-              <input className="h-12 rounded-xl border border-current/10 bg-transparent px-4 text-sm" placeholder="Email address" />
-              <input className="h-12 rounded-xl border border-current/10 bg-transparent px-4 text-sm" placeholder="Password" type="password" />
-              <button type="submit" className={`inline-flex h-12 items-center justify-center rounded-full px-6 text-sm font-semibold ${config.action}`}>Sign in</button>
+            <form className="mt-6 grid gap-4" onSubmit={handleSubmit}>
+              <input
+                className="h-12 rounded-xl border border-current/10 bg-transparent px-4 text-sm"
+                placeholder="Email address"
+                type="email"
+                autoComplete="email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+              />
+              <input
+                className="h-12 rounded-xl border border-current/10 bg-transparent px-4 text-sm"
+                placeholder="Password"
+                type="password"
+                autoComplete="current-password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+              />
+              {error ? <p className={`text-sm ${config.muted}`}>{error}</p> : null}
+              <button type="submit" disabled={isLoading} className={`inline-flex h-12 items-center justify-center rounded-full px-6 text-sm font-semibold ${config.action} disabled:cursor-not-allowed disabled:opacity-70`}>
+                {isLoading ? 'Signing in...' : 'Sign in'}
+              </button>
             </form>
             <div className={`mt-6 flex items-center justify-between text-sm ${config.muted}`}>
               <Link href="/forgot-password" className="hover:underline">Forgot password?</Link>

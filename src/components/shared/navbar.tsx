@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Search, Menu, X, User, FileText, Building2, LayoutGrid, Tag, Image as ImageIcon, ChevronRight, Sparkles, MapPin, Plus } from 'lucide-react'
+import { Search, Menu, X, User, FileText, Building2, LayoutGrid, Tag, Image as ImageIcon, ChevronRight, Sparkles, MapPin, Plus, Bookmark, LibraryBig } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/lib/auth-context'
 import { SITE_CONFIG, type TaskKey } from '@/lib/site-config'
@@ -106,6 +106,139 @@ export function Navbar() {
   }))
   const primaryTask = SITE_CONFIG.tasks.find((task) => task.key === recipe.primaryTask && task.enabled) || primaryNavigation[0]
   const isDirectoryProduct = recipe.homeLayout === 'listing-home' || recipe.homeLayout === 'classified-home'
+  const isCurationProduct = recipe.primaryTask === 'sbm'
+
+  if (isCurationProduct) {
+    const curationLinks = [
+      { label: 'Archive', href: primaryTask?.route || '/sbm', icon: Bookmark },
+      { label: 'Collections', href: '/sbm/collections', icon: LibraryBig },
+    ]
+    const lowEmphasisRoutes = SITE_CONFIG.tasks.filter((task) => task.enabled && task.key !== 'sbm')
+
+    return (
+      <header className="sticky top-0 z-50 w-full border-b border-[rgba(83,96,127,0.14)] bg-[rgba(248,243,235,0.84)] text-[#21283f] backdrop-blur-2xl">
+        <div className="border-b border-[rgba(83,96,127,0.08)]">
+          <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-[#53607f] sm:px-6 lg:px-8">
+            <span>Signal archive interface</span>
+            <span className="hidden sm:inline">Primary task: {primaryTask?.label || 'Social Bookmarking'}</span>
+          </div>
+        </div>
+        <nav className="mx-auto flex min-h-[5.2rem] max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
+          <div className="flex min-w-0 items-center gap-4 lg:gap-8">
+            <Link href="/" className="flex shrink-0 items-center gap-3">
+              <div className="flex h-12 w-12 items-center justify-center rounded-[1.4rem] border border-[rgba(83,96,127,0.14)] bg-[linear-gradient(180deg,rgba(255,255,255,0.86),rgba(247,241,232,0.8))] text-lg font-semibold text-[#3d4d77] shadow-[0_10px_30px_rgba(33,40,63,0.08)]">
+                DF
+              </div>
+              <div className="min-w-0">
+                <span className="block truncate text-xl font-semibold text-[#21283f]">{SITE_CONFIG.name}</span>
+                <span className="block text-[10px] uppercase tracking-[0.26em] text-[#7380a0]">{siteContent.navbar.tagline}</span>
+              </div>
+            </Link>
+
+            <div className="hidden lg:flex lg:items-center lg:gap-2">
+              {curationLinks.map((item) => {
+                const isActive = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href)
+                const Icon = item.icon
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={cn(
+                      'inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold transition-all duration-200',
+                      isActive
+                        ? 'bg-[#21283f] text-white shadow-[0_14px_34px_rgba(33,40,63,0.18)]'
+                        : 'border border-transparent text-[#53607f] hover:border-[rgba(83,96,127,0.14)] hover:bg-white/70 hover:text-[#21283f]'
+                    )}
+                  >
+                    <Icon className="h-4 w-4" />
+                    {item.label}
+                  </Link>
+                )
+              })}
+            </div>
+          </div>
+
+          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+            <Link
+              href="/search"
+              className="hidden items-center gap-2 rounded-full border border-[rgba(83,96,127,0.14)] bg-white/74 px-4 py-2.5 text-sm font-semibold text-[#53607f] shadow-[0_10px_26px_rgba(33,40,63,0.05)] transition hover:bg-white lg:inline-flex"
+            >
+              <Search className="h-4 w-4" />
+              Search
+            </Link>
+
+            {isAuthenticated ? (
+              <NavbarAuthControls />
+            ) : (
+              <div className="hidden items-center gap-2 md:flex">
+                <Button variant="ghost" size="sm" asChild className="rounded-full px-4 text-[#21283f] hover:bg-white/80">
+                  <Link href="/login">Sign In</Link>
+                </Button>
+                <Button size="sm" asChild className="rounded-full bg-[#21283f] text-white hover:bg-[#334264]">
+                  <Link href="/register">Create Account</Link>
+                </Button>
+              </div>
+            )}
+
+            <Button variant="ghost" size="icon" className="rounded-full text-[#21283f] lg:hidden" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+              {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </Button>
+          </div>
+        </nav>
+
+        {isMobileMenuOpen && (
+          <div className="border-t border-[rgba(83,96,127,0.1)] bg-[rgba(248,244,236,0.96)]">
+            <div className="space-y-2 px-4 py-4">
+              <Link
+                href="/search"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="mb-3 flex items-center gap-3 rounded-[1.35rem] border border-[rgba(83,96,127,0.14)] bg-white/80 px-4 py-3 text-sm font-medium text-[#53607f]"
+              >
+                <Search className="h-4 w-4" />
+                Search the archive
+              </Link>
+              {curationLinks.map((item) => {
+                const isActive = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href)
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={cn(
+                      'flex items-center gap-3 rounded-[1.35rem] px-4 py-3 text-sm font-semibold transition-colors',
+                      isActive
+                        ? 'bg-[#21283f] text-white'
+                        : 'border border-[rgba(83,96,127,0.14)] bg-white/70 text-[#53607f]'
+                    )}
+                  >
+                    <item.icon className="h-5 w-5" />
+                    {item.label}
+                  </Link>
+                )
+              })}
+              {lowEmphasisRoutes.length ? (
+                <div className="archive-panel-muted mt-4 rounded-[1.35rem] p-4">
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#7380a0]">More routes</p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {lowEmphasisRoutes.map((task) => (
+                      <Link
+                        key={task.key}
+                        href={task.route}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="rounded-full border border-[rgba(83,96,127,0.14)] bg-white/74 px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#53607f]"
+                      >
+                        {task.label}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+            </div>
+          </div>
+        )}
+      </header>
+    )
+  }
 
   if (isDirectoryProduct) {
     const palette = directoryPalette[(recipe.brandPack === 'market-utility' ? 'market-utility' : 'directory-clean') as keyof typeof directoryPalette]

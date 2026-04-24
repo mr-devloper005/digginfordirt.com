@@ -1,10 +1,10 @@
 export const siteIdentity = {
   code: process.env.NEXT_PUBLIC_SITE_CODE || 'e6biavwtxx',
   name: process.env.NEXT_PUBLIC_SITE_NAME || 'Digginfordirt',
-  tagline: process.env.NEXT_PUBLIC_SITE_TAGLINE || 'Social Bookmarking platform',
+  tagline: process.env.NEXT_PUBLIC_SITE_TAGLINE || 'Signal archive for the curious web',
   description:
     process.env.NEXT_PUBLIC_SITE_DESCRIPTION ||
-    'A social bookmarking platform for curated links, saved resources, and organized discovery.',
+    'An archival social bookmarking platform for curated links, research trails, and revisitable resource collections.',
   domain: process.env.NEXT_PUBLIC_SITE_DOMAIN || 'digginfordirt.com',
   url: process.env.NEXT_PUBLIC_SITE_URL || 'https://digginfordirt.com',
   ogImage: process.env.NEXT_PUBLIC_SITE_OG_IMAGE || '/og-default.png',

@@ -35,8 +35,8 @@ const variantShells = {
   'profile-business': 'bg-[linear-gradient(180deg,#f6fbff_0%,#ffffff_100%)]',
   'classified-bulletin': 'bg-[linear-gradient(180deg,#edf3e4_0%,#ffffff_100%)]',
   'classified-market': 'bg-[linear-gradient(180deg,#f4f6ef_0%,#ffffff_100%)]',
-  'sbm-curation': 'bg-[linear-gradient(180deg,#fff7ee_0%,#ffffff_100%)]',
-  'sbm-library': 'bg-[linear-gradient(180deg,#f7f8fc_0%,#ffffff_100%)]',
+  'sbm-curation': 'archive-shell',
+  'sbm-library': 'archive-shell',
 } as const
 
 export async function TaskListPage({ task, category }: { task: TaskKey; category?: string }) {
@@ -69,7 +69,15 @@ export async function TaskListPage({ task, category }: { task: TaskKey; category
         input: 'border-white/10 bg-white/6 text-white',
         button: 'bg-white text-slate-950 hover:bg-slate-200',
       }
-    : layoutKey.startsWith('article') || layoutKey.startsWith('sbm')
+    : layoutKey.startsWith('sbm')
+      ? {
+          muted: 'text-[#53607f]',
+          panel: 'curation-panel',
+          soft: 'border border-[rgba(80,96,136,0.12)] bg-white/72',
+          input: 'archive-input',
+          button: 'bg-[#21283f] text-white hover:bg-[#334264]',
+        }
+      : layoutKey.startsWith('article')
       ? {
           muted: 'text-[#72594a]',
           panel: 'border border-[#dbc6b6] bg-white/90',
@@ -218,21 +226,48 @@ export async function TaskListPage({ task, category }: { task: TaskKey; category
         {layoutKey === 'sbm-curation' || layoutKey === 'sbm-library' ? (
           <section className="mb-12 grid gap-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-start">
             <div>
-              <p className={`text-xs uppercase tracking-[0.3em] ${ui.muted}`}>{taskConfig?.label || task}</p>
-              <h1 className="mt-3 text-4xl font-semibold tracking-[-0.05em] text-foreground">Curated resources arranged more like collections than a generic post feed.</h1>
-              <p className={`mt-5 max-w-2xl text-sm leading-8 ${ui.muted}`}>Bookmarks, saved resources, and reference-style items need calmer grouping and lighter metadata. This variant gives them that separation.</p>
+              <div className="archive-kicker">
+                <Icon className="h-3.5 w-3.5" />
+                {taskConfig?.label || task}
+              </div>
+              <h1 className="mt-4 max-w-4xl text-4xl font-semibold tracking-[-0.05em] text-[#21283f] sm:text-5xl">A bookmark archive built like shelves, notes, and source cards instead of repeated generic tiles.</h1>
+              <p className={`mt-5 max-w-2xl text-sm leading-8 ${ui.muted}`}>Saved links need clearer categorization, calmer density, and stronger revisit cues. This layout keeps the task logic identical while changing the reading rhythm completely.</p>
+              <div className="mt-6 grid gap-3 sm:grid-cols-3">
+                {[
+                  ['Shelf-first scan', 'Archive cards and collection cues lead the page'],
+                  ['Fast revisit', 'Categories, source hints, and short descriptions stay visible'],
+                  ['Low-noise density', 'More organization, less feed clutter'],
+                ].map(([title, body]) => (
+                  <div key={title} className="archive-stat rounded-[1.6rem] p-4">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#7380a0]">{title}</p>
+                    <p className="mt-2 text-sm leading-6 text-[#53607f]">{body}</p>
+                  </div>
+                ))}
+              </div>
             </div>
             <div className={`rounded-[2rem] p-6 ${ui.panel}`}>
               <p className={`text-xs uppercase tracking-[0.24em] ${ui.muted}`}>Collection filter</p>
-              <form className="mt-4 flex items-center gap-3" action={taskConfig?.route || '#'}>
-                <select name="category" defaultValue={normalizedCategory} className={`h-11 flex-1 rounded-xl px-3 text-sm ${ui.input}`}>
+              <p className="mt-3 text-sm leading-7 text-[#53607f]">Use categories to narrow the shelf without changing what routes remain available across the site.</p>
+              <form className="mt-5 space-y-3" action={taskConfig?.route || '#'}>
+                <select name="category" defaultValue={normalizedCategory} className={`h-11 w-full rounded-xl px-3 text-sm ${ui.input}`}>
                   <option value="all">All categories</option>
                   {CATEGORY_OPTIONS.map((item) => (
                     <option key={item.slug} value={item.slug}>{item.name}</option>
                   ))}
                 </select>
-                <button type="submit" className={`h-11 rounded-xl px-4 text-sm font-medium ${ui.button}`}>Apply</button>
+                <button type="submit" className={`h-11 w-full rounded-xl px-4 text-sm font-medium ${ui.button}`}>Apply filter</button>
               </form>
+              <div className="mt-5 grid gap-3">
+                {[
+                  { title: 'Primary emphasis', body: 'Social bookmarking stays front and center.' },
+                  { title: 'Secondary access', body: 'Other routes remain reachable through search, footer links, and direct URLs.' },
+                ].map((item) => (
+                  <div key={item.title} className="rounded-[1.4rem] border border-[rgba(80,96,136,0.12)] bg-white/72 p-4">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#7380a0]">{item.title}</p>
+                    <p className="mt-2 text-sm leading-6 text-[#53607f]">{item.body}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </section>
         ) : null}

@@ -54,20 +54,25 @@ export function TaskListClient({ task, initialPosts, category }: Props) {
 
   if (!merged.length) {
     return (
-      <div className="rounded-2xl border border-dashed border-border p-10 text-center text-muted-foreground">
+      <div className="curation-panel rounded-[2rem] border border-dashed p-10 text-center text-muted-foreground">
         No posts yet for this section.
       </div>
     );
   }
 
+  const gridClassName =
+    task === "sbm"
+      ? "grid gap-5 lg:grid-cols-2"
+      : "grid gap-6 sm:grid-cols-2 lg:grid-cols-4";
+
   return (
-    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-      {merged.map((post) => {
+    <div className={gridClassName}>
+      {merged.map((post, index) => {
         const localOnly = (post as any).localOnly;
         const href = localOnly
           ? `/local/${task}/${post.slug}`
           : buildPostUrl(task, post.slug);
-        return <TaskPostCard key={post.id} post={post} href={href} taskKey={task} />;
+        return <TaskPostCard key={post.id} post={post} href={href} taskKey={task} compact={task === "sbm" ? index % 3 === 2 : false} />;
       })}
     </div>
   );

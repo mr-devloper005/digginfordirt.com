@@ -127,14 +127,14 @@ function getVisualTone() {
 
 function getCurationTone() {
   return {
-    shell: 'bg-[#f7f1ea] text-[#261811]',
-    panel: 'border border-[#ddcdbd] bg-[#fffaf4] shadow-[0_24px_60px_rgba(91,56,37,0.08)]',
-    soft: 'border border-[#e8dbce] bg-[#f3e8db]',
-    muted: 'text-[#71574a]',
-    title: 'text-[#261811]',
-    badge: 'bg-[#5b2b3b] text-[#fff0f5]',
-    action: 'bg-[#5b2b3b] text-[#fff0f5] hover:bg-[#74364b]',
-    actionAlt: 'border border-[#ddcdbd] bg-transparent text-[#261811] hover:bg-[#efe3d6]',
+    shell: 'bg-[linear-gradient(180deg,#f7f3ec_0%,#f3efe7_52%,#ffffff_100%)] text-[#28314d]',
+    panel: 'border border-[rgba(80,96,136,0.12)] bg-[rgba(255,252,247,0.88)] shadow-[0_24px_72px_rgba(40,49,77,0.08)]',
+    soft: 'border border-[rgba(80,96,136,0.12)] bg-white/72',
+    muted: 'text-[#5f6b8c]',
+    title: 'text-[#28314d]',
+    badge: 'bg-[#2f3d63] text-white',
+    action: 'bg-[#28314d] text-white hover:bg-[#36446c]',
+    actionAlt: 'border border-[rgba(80,96,136,0.12)] bg-white/72 text-[#28314d] hover:bg-white',
   }
 }
 
@@ -409,64 +409,160 @@ function VisualHome({ primaryTask, imagePosts, profilePosts, articlePosts }: { p
   )
 }
 
-function CurationHome({ primaryTask, bookmarkPosts, profilePosts, articlePosts }: { primaryTask?: EnabledTask; bookmarkPosts: SitePost[]; profilePosts: SitePost[]; articlePosts: SitePost[] }) {
-  const tone = getCurationTone()
-  const collections = bookmarkPosts.length ? bookmarkPosts.slice(0, 4) : articlePosts.slice(0, 4)
-  const people = profilePosts.slice(0, 3)
+function CurationHome({ primaryTask, bookmarkPosts, profilePosts: _profilePosts, articlePosts }: { primaryTask?: EnabledTask; bookmarkPosts: SitePost[]; profilePosts: SitePost[]; articlePosts: SitePost[] }) {
+  const collections = bookmarkPosts.length ? bookmarkPosts.slice(0, 8) : articlePosts.slice(0, 8)
+  const spotlight = collections[0]
+  const leadShelf = collections.slice(1, 4)
+  const deepShelf = collections.slice(4, 8)
+  const lowEmphasisRoutes = SITE_CONFIG.tasks.filter((task) => task.key !== 'sbm').slice(0, 5)
 
   return (
-    <main className={tone.shell}>
+    <main className="archive-shell">
       <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-18">
-        <div className="grid gap-8 lg:grid-cols-[1fr_1fr] lg:items-start">
-          <div>
-            <span className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] ${tone.badge}`}>
-              <Bookmark className="h-3.5 w-3.5" />
-              Curated collections
-            </span>
-            <h1 className={`mt-6 max-w-4xl text-5xl font-semibold tracking-[-0.06em] sm:text-6xl ${tone.title}`}>
-              Save, organize, and revisit resources through shelves, boards, and curated collections.
-            </h1>
-            <p className={`mt-6 max-w-2xl text-base leading-8 ${tone.muted}`}>{SITE_CONFIG.description}</p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link href={primaryTask?.route || '/sbm'} className={`inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-semibold ${tone.action}`}>
-                Open collections
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link href="/profile" className={`inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-semibold ${tone.actionAlt}`}>
-                Explore curators
-              </Link>
+        <div className="grid gap-8 lg:grid-cols-[1.08fr_0.92fr] lg:items-start">
+          <div className="space-y-8">
+            <div className="archive-panel archive-grid rounded-[2.4rem] p-7 sm:p-9">
+              <span className="archive-kicker">
+                <Bookmark className="h-3.5 w-3.5" />
+                Social bookmarking archive
+              </span>
+              <h1 className="mt-6 max-w-4xl text-5xl font-semibold tracking-[-0.07em] text-[#21283f] sm:text-6xl">
+                Dig through useful links like a field notebook, not a recycled template feed.
+              </h1>
+              <p className="mt-6 max-w-2xl text-base leading-8 text-[#53607f]">{SITE_CONFIG.description}</p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Link href={primaryTask?.route || '/sbm'} className="archive-button-solid inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-semibold">
+                  Open archive
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+                <Link href="/sbm/collections" className="archive-button-soft inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-semibold">
+                  Browse collections
+                </Link>
+              </div>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-3">
+              {[
+                ['Signal-first hierarchy', 'Bookmarks, hosts, tags, and notes surface before everything else.'],
+                ['No hero photography', 'The product leans on structure, spacing, and metadata instead of stock-image carryover.'],
+                ['Routes stay intact', 'Lower-emphasis tasks still work by URL, search, and footer navigation.'],
+              ].map(([label, value]) => (
+                <div key={label} className="archive-stat rounded-[1.7rem] p-5">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#7380a0]">{label}</p>
+                  <p className="mt-3 text-sm leading-6 text-[#21283f]">{value}</p>
+                </div>
+              ))}
             </div>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-2">
-            {collections.map((post) => (
-              <Link key={post.id} href={getTaskHref(resolveTaskKey(post.task, 'sbm'), post.slug)} className={`rounded-[1.8rem] p-6 ${tone.panel}`}>
-                <p className="text-xs font-semibold uppercase tracking-[0.24em] opacity-70">Collection</p>
-                <h3 className="mt-3 text-2xl font-semibold">{post.title}</h3>
-                <p className={`mt-3 text-sm leading-8 ${tone.muted}`}>{post.summary || 'A calmer bookmark surface with room for context and grouping.'}</p>
-              </Link>
-            ))}
+          <div className="archive-panel rounded-[2.4rem] p-6 sm:p-7">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#7380a0]">Desk snapshot</p>
+                <h2 className="mt-2 text-3xl font-semibold text-[#21283f]">Current archive shelf</h2>
+              </div>
+              <Globe2 className="h-6 w-6 text-[#53607f]" />
+            </div>
+            <div className="mt-6 grid gap-3">
+              {collections.slice(0, 4).map((post, index) => (
+                <Link
+                  key={post.id}
+                  href={getTaskHref(resolveTaskKey(post.task, 'sbm'), post.slug)}
+                  className="rounded-[1.6rem] border border-[rgba(83,96,127,0.14)] bg-white/78 p-4 transition hover:-translate-y-0.5 hover:bg-white"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#7380a0]">Shelf card {index + 1}</p>
+                      <h3 className="mt-2 line-clamp-2 text-xl font-semibold text-[#21283f]">{post.title}</h3>
+                    </div>
+                    <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-[#53607f]" />
+                  </div>
+                  <p className="mt-3 line-clamp-3 text-sm leading-7 text-[#53607f]">
+                    {post.summary || 'A saved reference arranged for fast return visits and cleaner scanning.'}
+                  </p>
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
 
-        <div className="mt-12 grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
-          <div className={`rounded-[2rem] p-7 ${tone.panel}`}>
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] opacity-70">Why this feels different</p>
-            <h2 className="mt-3 text-3xl font-semibold tracking-[-0.04em]">More like saved boards and reading shelves than a generic post feed.</h2>
-            <p className={`mt-4 max-w-2xl text-sm leading-8 ${tone.muted}`}>The structure is calmer, the cards are less noisy, and the page encourages collecting and returning instead of forcing everything into a fast-scrolling list.</p>
-          </div>
-          <div className="grid gap-4 md:grid-cols-3">
-            {people.map((post) => (
-              <Link key={post.id} href={`/profile/${post.slug}`} className={`rounded-[1.8rem] p-5 ${tone.soft}`}>
-                <div className="relative h-32 overflow-hidden rounded-[1.2rem]">
-                  <ContentImage src={getPostImage(post)} alt={post.title} fill className="object-cover" />
-                </div>
-                <h3 className="mt-4 text-lg font-semibold">{post.title}</h3>
-                <p className={`mt-2 text-sm leading-7 ${tone.muted}`}>Curator profile, saved resources, and collection notes.</p>
+        <div className="mt-12 grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
+          <div className="archive-panel rounded-[2.3rem] p-7">
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#7380a0]">Archive thesis</p>
+            <h2 className="mt-3 max-w-3xl text-3xl font-semibold tracking-[-0.05em] text-[#21283f]">
+              This homepage behaves like a working index: shelves, cross-references, and bookmark notes replace the usual hero-image-plus-cards template.
+            </h2>
+            <p className="mt-4 max-w-2xl text-sm leading-8 text-[#53607f]">
+              The visual system is deliberately text-led and image-light so the site feels like a standalone product built for curation and revisit value.
+            </p>
+            {spotlight ? (
+              <Link href={getTaskHref(resolveTaskKey(spotlight.task, 'sbm'), spotlight.slug)} className="curation-note mt-6 block rounded-[1.8rem] p-5 hover:bg-white/90">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#7380a0]">Lead note</p>
+                <h3 className="mt-2 text-2xl font-semibold text-[#21283f]">{spotlight.title}</h3>
+                <p className="mt-3 text-sm leading-7 text-[#53607f]">{spotlight.summary || 'A saved reference with room for context, category, and revisit value.'}</p>
               </Link>
-            ))}
+            ) : null}
+            {leadShelf.length ? (
+              <div className="mt-6 grid gap-3 sm:grid-cols-3">
+                {leadShelf.map((post) => (
+                  <Link key={post.id} href={getTaskHref(resolveTaskKey(post.task, 'sbm'), post.slug)} className="archive-panel-muted rounded-[1.5rem] p-4 hover:bg-white/80">
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#7380a0]">Cross-reference</p>
+                    <h3 className="mt-2 text-base font-semibold text-[#21283f]">{post.title}</h3>
+                  </Link>
+                ))}
+              </div>
+            ) : null}
+          </div>
+
+          <div className="grid gap-4">
+            <div className="archive-panel-muted rounded-[2rem] p-6">
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#7380a0]">Quick access</p>
+              <div className="mt-4 grid gap-3">
+                <Link href="/search" className="archive-button-soft flex items-center justify-between rounded-[1.2rem] px-4 py-3 text-sm font-semibold">
+                  Search the archive
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+                <Link href="/sbm/submit" className="archive-button-soft flex items-center justify-between rounded-[1.2rem] px-4 py-3 text-sm font-semibold">
+                  Submit a bookmark
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            </div>
+            <div className="archive-panel-muted rounded-[2rem] p-6">
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#7380a0]">Lower-emphasis routes</p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {lowEmphasisRoutes.map((task) => (
+                  <Link key={task.key} href={task.route} className="rounded-full border border-[rgba(83,96,127,0.14)] bg-white/78 px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#53607f] hover:bg-white">
+                    {task.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
+
+        {deepShelf.length ? (
+          <section className="mt-12">
+            <div className="mb-6 flex items-end justify-between gap-4">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#7380a0]">Recent finds</p>
+                <h2 className="mt-3 text-3xl font-semibold tracking-[-0.05em] text-[#21283f]">Fresh entries in the archive desk.</h2>
+              </div>
+              <Link href={primaryTask?.route || '/sbm'} className="text-sm font-semibold text-[#3d4d77] hover:opacity-80">Open full archive</Link>
+            </div>
+            <div className="grid gap-5 lg:grid-cols-2">
+              {deepShelf.map((post, index) => (
+                <TaskPostCard
+                  key={post.id}
+                  post={post}
+                  href={getTaskHref(resolveTaskKey(post.task, 'sbm'), post.slug)}
+                  taskKey="sbm"
+                  compact={index % 2 === 1}
+                />
+              ))}
+            </div>
+          </section>
+        ) : null}
       </section>
     </main>
   )
