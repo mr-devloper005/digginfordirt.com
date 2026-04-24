@@ -2,76 +2,76 @@ import type { TaskKey } from '@/lib/site-config'
 
 export const siteContent = {
   navbar: {
-    tagline: 'Independent reading platform',
+    tagline: 'Filed for later, found faster',
   },
   footer: {
-    tagline: 'Stories, resources, and discoverable posts',
+    tagline: 'Save the signal. Skip the feed noise.',
   },
   hero: {
-    badge: 'Latest stories and visuals',
-    title: ['A thoughtful home for', 'stories, visuals, and discovery.'],
+    badge: 'Signal archive',
+    title: ['Dig through useful links,', 'research trails, and saved signals.'],
     description:
-      'Explore fresh articles, image-led posts, and discoverable content across the platform through a calmer and clearer browsing experience.',
+      'Browse a deliberately organized archive of links, tools, references, and rabbit holes without the noise of a generic content feed.',
     primaryCta: {
-      label: 'Read latest stories',
-      href: '/articles',
+      label: 'Open bookmark archive',
+      href: '/sbm',
     },
     secondaryCta: {
-      label: 'Explore visuals',
-      href: '/images',
+      label: 'Browse collections',
+      href: '/sbm/collections',
     },
-    searchPlaceholder: 'Search stories, visuals, listings, and more',
-    focusLabel: 'Focus',
-    featureCardBadge: 'latest cover rotation',
-    featureCardTitle: 'Latest posts shape the visual identity of the homepage.',
+    searchPlaceholder: 'Search links, hosts, tags, and references',
+    focusLabel: 'Shelf focus',
+    featureCardBadge: 'archive snapshot',
+    featureCardTitle: 'Collections surface the strongest references without turning the site into a generic blog.',
     featureCardDescription:
-      'Recent images and stories stay at the center of the experience without changing any core platform behavior.',
+      'Bookmark activity drives the presentation layer while the underlying task routes and platform behavior remain unchanged.',
   },
   home: {
     metadata: {
-      title: 'Stories, visuals, and discoverable content',
+      title: 'Curated links, collections, and research trails',
       description:
-        'Explore articles, images, listings, and curated posts through a cleaner reading-first experience.',
-      openGraphTitle: 'Stories, visuals, and discoverable content',
+        'Explore curated links, saved resources, and organized collections through a distinctive archive-style browsing experience.',
+      openGraphTitle: 'Curated links, collections, and research trails',
       openGraphDescription:
-        'Discover articles, visual posts, and connected content through a calmer reading-first experience.',
-      keywords: ['story platform', 'article site', 'visual content', 'content discovery'],
+        'Discover useful links, saved references, and organized collections through a calmer archive-style browsing experience.',
+      keywords: ['social bookmarking', 'curated links', 'resource archive', 'collection library'],
     },
-    introBadge: 'About the platform',
-    introTitle: 'Built for reading, browsing, and connecting different kinds of content.',
+    introBadge: 'About the archive',
+    introTitle: 'Built for saving better links, revisiting them faster, and keeping the signal easy to scan.',
     introParagraphs: [
-      'This site brings together article-style reading, visual browsing, and structured discovery so visitors can move naturally between different content types.',
-      'Instead of separating stories, visuals, and supporting resources into disconnected surfaces, the platform keeps them connected in one place with consistent navigation and easier exploration.',
-      'Whether someone starts with a story, an image-led post, a listing, or a resource page, they can keep discovering related content without friction.',
+      'Digginfordirt is designed like a modern field archive: links are grouped, categories are readable at a glance, and strong resources stay easy to come back to.',
+      'The homepage prioritizes social bookmarking first, while the rest of the platform remains available through search, direct URLs, and secondary navigation layers.',
+      'Instead of borrowing a blog or marketplace layout, the interface treats each saved resource like an index card in a living library.',
     ],
-    sideBadge: 'At a glance',
+    sideBadge: 'Why it feels different',
     sidePoints: [
-      'Reading-first homepage with stronger emphasis on stories and imagery.',
-      'Connected sections for articles, visuals, listings, and supporting resources.',
-      'Cleaner browsing rhythm designed to make exploration feel easier.',
-      'Lightweight interactions that keep the experience fast and readable.',
+      'Bookmark-first homepage with archive, shelf, and note-card patterns.',
+      'Primary navigation emphasizes collections and saved resources, not every task equally.',
+      'Lower-emphasis routes stay accessible through the footer, search, and direct URLs.',
+      'Lightweight motion and image-light layouts keep the experience fast and readable.',
     ],
     primaryLink: {
-      label: 'Browse articles',
-      href: '/articles',
+      label: 'Browse bookmarks',
+      href: '/sbm',
     },
     secondaryLink: {
-      label: 'See visuals',
-      href: '/images',
+      label: 'Open collections',
+      href: '/sbm/collections',
     },
   },
   cta: {
-    badge: 'Start exploring',
-    title: 'Explore articles, visuals, and resources through one connected experience.',
+    badge: 'Start curating',
+    title: 'Save better sources, build sharper collections, and keep your best references close.',
     description:
-      'Move between articles, image-led posts, listings, and resources through one clearer and more connected visual system.',
+      'Use the same task logic underneath, but with a clearer social-bookmarking interface built for collecting, organizing, and returning to useful links.',
     primaryCta: {
-      label: 'Get Started Free',
+      label: 'Start your archive',
       href: '/register',
     },
     secondaryCta: {
-      label: 'Contact Sales',
-      href: '/contact',
+      label: 'Search the archive',
+      href: '/search',
     },
   },
   taskSectionHeading: 'Latest {label}',
@@ -100,8 +100,8 @@ export const taskPageMetadata: Record<Exclude<TaskKey, 'comment' | 'org' | 'soci
     description: 'Discover public profiles, brand pages, and identity-focused posts in one place.',
   },
   sbm: {
-    title: 'Curated links and saved resources',
-    description: 'Browse useful links, saved references, and curated resources organized for discovery.',
+    title: 'Curated links, archive shelves, and revisitable resources',
+    description: 'Browse useful links, research references, and curated bookmark collections organized like a living archive.',
   },
   pdf: {
     title: 'PDFs and downloadable resources',
@@ -179,16 +179,16 @@ export const taskIntroCopy: Record<
     ],
   },
   sbm: {
-    title: 'Curated links and bookmarked resources',
+    title: 'Curated links, notes, and bookmarked resources',
     paragraphs: [
-      'This section collects useful links, references, tools, and saved resources in a text-first browsing format.',
-      'Bookmarks stay connected to the rest of the platform, making it easier to move from a saved link into related stories, listings, or resources.',
-      'Use this section to organize helpful sources and discover connected content without leaving the broader site experience.',
+      'This section is designed like a research shelf rather than a generic post feed, with calmer grouping, stronger category cues, and cleaner link-focused cards.',
+      'Bookmarks stay connected to the rest of the platform, so supporting routes remain available without taking over the main visual hierarchy.',
+      'Use this archive to collect useful sources, revisit strong references, and move through saved material without losing the thread.',
     ],
     links: [
-      { label: 'Browse articles', href: '/articles' },
-      { label: 'Explore listings', href: '/listings' },
-      { label: 'Open PDFs', href: '/pdf' },
+      { label: 'Browse collections', href: '/sbm/collections' },
+      { label: 'Search the archive', href: '/search' },
+      { label: 'Submit a bookmark', href: '/sbm/submit' },
     ],
   },
   pdf: {
