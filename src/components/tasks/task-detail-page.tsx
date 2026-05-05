@@ -19,6 +19,7 @@ import { getFactoryState } from "@/design/factory/get-factory-state";
 import { getProductKind } from "@/design/factory/get-product-kind";
 import { DirectoryTaskDetailPage } from "@/design/products/directory/task-detail-page";
 import { TASK_DETAIL_PAGE_OVERRIDE_ENABLED, TaskDetailPageOverride } from "@/overrides/task-detail-page";
+import { BookmarkDetailActions } from "@/components/sbm/bookmark-detail-actions";
 
 type PostContent = {
   category?: string;
@@ -320,78 +321,91 @@ export async function TaskDetailPage({ task, slug }: { task: TaskKey; slug: stri
                 ) : null}
 
                 {isBookmark ? (
-                  <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-                    <div className="curation-note rounded-[2.2rem] p-7">
-                      <div className="flex flex-wrap items-center gap-3 text-sm text-[#5f6b8c]">
-                        <Badge className="inline-flex items-center gap-1 bg-[#2f3d63] text-white">
-                          <Tag className="h-3.5 w-3.5" />
+                  <div className="mx-auto w-full max-w-4xl space-y-6">
+                    {/* Main Card */}
+                    <div className="curation-note rounded-[2rem] p-8 sm:p-10">
+                      {/* Header with category and meta */}
+                      <div className="flex flex-wrap items-center gap-4">
+                        <Badge className="inline-flex items-center gap-1.5 bg-[#2f3d63] px-3 py-1.5 text-sm text-white">
+                          <Tag className="h-4 w-4" />
                           {category}
                         </Badge>
-                        {location ? (
-                          <span className="inline-flex items-center gap-1">
-                            <MapPin className="h-4 w-4" />
-                            {location}
-                          </span>
-                        ) : null}
-                        {content.website ? (
-                          <a href={content.website} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[#36446c] hover:underline">
-                            <Globe className="h-4 w-4" />
-                            Visit source
-                          </a>
-                        ) : null}
                       </div>
-                      <h1 className="mt-5 text-4xl font-semibold tracking-[-0.05em] text-[#21283f] sm:text-5xl">{post.title}</h1>
+
+                      {/* Title */}
+                      <h1 className="mt-6 text-4xl font-semibold tracking-[-0.04em] text-[#21283f] sm:text-5xl lg:text-6xl">
+                        {post.title}
+                      </h1>
+
+                      {/* Author info */}
+                      <div className="mt-4 flex items-center gap-3">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#e8ecf5] text-[#2f3d63]">
+                          <span className="text-sm font-semibold">
+                            {articleAuthor.charAt(0).toUpperCase()}
+                          </span>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-[#21283f]">{articleAuthor}</p>
+                          <p className="text-xs text-[#7380a0]">Author</p>
+                        </div>
+                      </div>
+
+                      {/* Tags */}
                       {postTags.length ? (
                         <div className="mt-6 flex flex-wrap gap-2">
-                          {postTags.map((tag) => (
-                            <Badge key={tag} variant="outline" className="rounded-full border-[rgba(80,96,136,0.14)] bg-white/78 px-3 py-1 text-[#51607f]">
+                          {postTags.slice(0, 4).map((tag) => (
+                            <Badge key={tag} variant="outline" className="rounded-full border-[rgba(80,96,136,0.14)] bg-white/78 px-3 py-1.5 text-sm text-[#51607f]">
                               {tag}
                             </Badge>
                           ))}
                         </div>
                       ) : null}
-                      <RichContent html={descriptionHtml} className="article-content mt-6 max-w-3xl text-[#53607f]" />
-                    </div>
 
-                    <div className="space-y-5">
-                      <div className="curation-panel rounded-[2rem] p-6">
-                        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#7380a0]">Archive note</p>
-                        <p className="mt-3 text-sm leading-7 text-[#53607f]">This bookmark keeps the same underlying data and route behavior, but the page is framed like a saved research card rather than a generic content detail screen.</p>
+                      {/* Share and Follow Buttons */}
+                      <div className="mt-6">
+                        <BookmarkDetailActions url={`${SITE_CONFIG.baseUrl.replace(/\/$/, "")}${taskConfig?.route || "/sbm"}/${post.slug}`} />
                       </div>
-                      <div className="curation-panel rounded-[2rem] p-6">
-                        <h2 className="text-lg font-semibold text-[#21283f]">Link details</h2>
-                        <div className="mt-4 space-y-3 text-sm text-[#53607f]">
-                          {content.website ? (
-                            <div className="flex items-start gap-2">
-                              <Globe className="mt-0.5 h-4 w-4" />
-                              <a href={content.website} className="break-all text-[#21283f] hover:underline" target="_blank" rel="noreferrer">
-                                {content.website}
-                              </a>
-                            </div>
-                          ) : null}
-                          {content.email ? (
-                            <div className="flex items-start gap-2">
-                              <Mail className="mt-0.5 h-4 w-4" />
-                              <a href={`mailto:${content.email}`} className="break-all text-[#28314d] hover:underline">
-                                {content.email}
-                              </a>
-                            </div>
-                          ) : null}
-                          {location ? (
-                            <div className="flex items-start gap-2">
-                              <MapPin className="mt-0.5 h-4 w-4" />
-                              <span>{location}</span>
-                            </div>
-                          ) : null}
-                        </div>
-                        {content.website ? (
-                          <Button className="mt-5 w-full rounded-full bg-[#21283f] text-white hover:bg-[#334264]" asChild>
-                            <a href={content.website} target="_blank" rel="noreferrer">
-                              Visit source
+
+                      {/* Description */}
+                      <div className="mt-8 space-y-4">
+                        <RichContent html={descriptionHtml} className="article-content max-w-none text-base leading-7 text-[#53607f]" />
+                      </div>
+
+                      {/* Action Button */}
+                      {content.website ? (
+                        <div className="mt-8 pt-6 border-t border-[rgba(80,96,136,0.1)]">
+                          <Button className="rounded-full bg-[#2f3d63] px-6 py-2.5 text-base text-white hover:bg-[#3d4d77]" asChild>
+                            <a href={content.website} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2">
+                              <Globe className="h-4 w-4" />
+                              Visit Source
                             </a>
                           </Button>
-                        ) : null}
-                      </div>
+                        </div>
+                      ) : null}
+                    </div>
+
+                    {/* Additional Info Cards */}
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      {location && (
+                        <div className="curation-panel rounded-[1.5rem] p-5">
+                          <div className="flex items-center gap-2 text-[#7380a0]">
+                            <MapPin className="h-4 w-4" />
+                            <span className="text-xs font-semibold uppercase tracking-[0.18em]">Location</span>
+                          </div>
+                          <p className="mt-2 text-sm font-medium text-[#21283f]">{location}</p>
+                        </div>
+                      )}
+                      {content.email && (
+                        <div className="curation-panel rounded-[1.5rem] p-5">
+                          <div className="flex items-center gap-2 text-[#7380a0]">
+                            <Mail className="h-4 w-4" />
+                            <span className="text-xs font-semibold uppercase tracking-[0.18em]">Email</span>
+                          </div>
+                          <a href={`mailto:${content.email}`} className="mt-2 block text-sm font-medium text-[#21283f] hover:underline">
+                            {content.email}
+                          </a>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ) : (
@@ -582,39 +596,6 @@ export async function TaskDetailPage({ task, slug }: { task: TaskKey; slug: stri
             </div>
             </>
           ) : null}
-          <nav className={cn('mt-6 rounded-2xl p-4', isBookmark ? 'curation-panel border-[rgba(80,96,136,0.12)]' : 'border border-border bg-card/60')}>
-            <p className={cn('text-sm font-semibold', isBookmark ? 'text-[#21283f]' : 'text-foreground')}>Related links</p>
-            <ul className="mt-2 space-y-2 text-sm">
-              {related.map((item) => (
-                <li key={`link-${item.id}`}>
-                  <Link
-                    href={buildPostUrl(task, item.slug)}
-                    className={cn('underline-offset-4 hover:underline', isBookmark ? 'text-[#3d4d77]' : 'text-primary')}
-                  >
-                    {item.title}
-                  </Link>
-                </li>
-              ))}
-              {taskConfig?.route ? (
-                <li>
-                  <Link
-                    href={taskConfig.route}
-                    className={cn('underline-offset-4 hover:underline', isBookmark ? 'text-[#3d4d77]' : 'text-primary')}
-                  >
-                    Browse all {taskConfig.label}
-                  </Link>
-                </li>
-              ) : null}
-              <li>
-                <Link
-                  href={`/search?q=${encodeURIComponent(category)}`}
-                  className={cn('underline-offset-4 hover:underline', isBookmark ? 'text-[#3d4d77]' : 'text-primary')}
-                >
-                  Search more in {category}
-                </Link>
-              </li>
-            </ul>
-          </nav>
         </section>
       </main>
       <Footer />
