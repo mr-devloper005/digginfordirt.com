@@ -6,6 +6,7 @@ import { NavbarShell } from '@/components/shared/navbar-shell'
 import { Footer } from '@/components/shared/footer'
 import { SchemaJsonLd } from '@/components/seo/schema-jsonld'
 import { TaskPostCard } from '@/components/shared/task-post-card'
+import { CurrentArchiveShelf } from '@/components/home/current-archive-shelf'
 import { SITE_CONFIG, type TaskKey } from '@/lib/site-config'
 import { buildPageMetadata } from '@/lib/seo'
 import { fetchTaskPosts } from '@/lib/task-data'
@@ -414,7 +415,6 @@ function CurationHome({ primaryTask, bookmarkPosts, profilePosts: _profilePosts,
   const spotlight = collections[0]
   const leadShelf = collections.slice(1, 4)
   const deepShelf = collections.slice(4, 8)
-  const lowEmphasisRoutes = SITE_CONFIG.tasks.filter((task) => task.key !== 'sbm').slice(0, 5)
 
   return (
     <main className="archive-shell">
@@ -422,10 +422,6 @@ function CurationHome({ primaryTask, bookmarkPosts, profilePosts: _profilePosts,
         <div className="grid gap-8 lg:grid-cols-[1.08fr_0.92fr] lg:items-start">
           <div className="space-y-8">
             <div className="archive-panel archive-grid rounded-[2.4rem] p-7 sm:p-9">
-              <span className="archive-kicker">
-                <Bookmark className="h-3.5 w-3.5" />
-                Social bookmarking archive
-              </span>
               <h1 className="mt-6 max-w-4xl text-5xl font-semibold tracking-[-0.07em] text-[#21283f] sm:text-6xl">
                 Dig through useful links like a field notebook, not a recycled template feed.
               </h1>
@@ -434,9 +430,6 @@ function CurationHome({ primaryTask, bookmarkPosts, profilePosts: _profilePosts,
                 <Link href={primaryTask?.route || '/sbm'} className="archive-button-solid inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-semibold">
                   Open archive
                   <ArrowRight className="h-4 w-4" />
-                </Link>
-                <Link href="/sbm/collections" className="archive-button-soft inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-semibold">
-                  Browse collections
                 </Link>
               </div>
             </div>
@@ -463,26 +456,7 @@ function CurationHome({ primaryTask, bookmarkPosts, profilePosts: _profilePosts,
               </div>
               <Globe2 className="h-6 w-6 text-[#53607f]" />
             </div>
-            <div className="mt-6 grid gap-3">
-              {collections.slice(0, 4).map((post, index) => (
-                <Link
-                  key={post.id}
-                  href={getTaskHref(resolveTaskKey(post.task, 'sbm'), post.slug)}
-                  className="rounded-[1.6rem] border border-[rgba(83,96,127,0.14)] bg-white/78 p-4 transition hover:-translate-y-0.5 hover:bg-white"
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#7380a0]">Shelf card {index + 1}</p>
-                      <h3 className="mt-2 line-clamp-2 text-xl font-semibold text-[#21283f]">{post.title}</h3>
-                    </div>
-                    <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-[#53607f]" />
-                  </div>
-                  <p className="mt-3 line-clamp-3 text-sm leading-7 text-[#53607f]">
-                    {post.summary || 'A saved reference arranged for fast return visits and cleaner scanning.'}
-                  </p>
-                </Link>
-              ))}
-            </div>
+            <CurrentArchiveShelf initialPosts={collections} />
           </div>
         </div>
 
@@ -526,16 +500,6 @@ function CurationHome({ primaryTask, bookmarkPosts, profilePosts: _profilePosts,
                   Submit a bookmark
                   <ArrowRight className="h-4 w-4" />
                 </Link>
-              </div>
-            </div>
-            <div className="archive-panel-muted rounded-[2rem] p-6">
-              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#7380a0]">Lower-emphasis routes</p>
-              <div className="mt-4 flex flex-wrap gap-2">
-                {lowEmphasisRoutes.map((task) => (
-                  <Link key={task.key} href={task.route} className="rounded-full border border-[rgba(83,96,127,0.14)] bg-white/78 px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#53607f] hover:bg-white">
-                    {task.label}
-                  </Link>
-                ))}
               </div>
             </div>
           </div>
