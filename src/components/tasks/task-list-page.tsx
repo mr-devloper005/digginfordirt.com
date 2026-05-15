@@ -10,7 +10,6 @@ import { CATEGORY_OPTIONS, normalizeCategory } from '@/lib/categories'
 import { taskIntroCopy } from '@/config/site.content'
 import { getFactoryState } from '@/design/factory/get-factory-state'
 import { TASK_LIST_PAGE_OVERRIDE_ENABLED, TaskListPageOverride } from '@/overrides/task-list-page'
-import { BookmarkDetailActions } from '@/components/sbm/bookmark-detail-actions'
 
 const taskIcons: Record<TaskKey, any> = {
   listing: Building2,
@@ -244,9 +243,6 @@ export async function TaskListPage({ task, category }: { task: TaskKey; category
                     <p className="mt-2 text-sm leading-6 text-[#53607f]">{body}</p>
                   </div>
                 ))}
-              </div>
-              <div className="mt-6">
-                <BookmarkDetailActions url={`${baseUrl}${taskConfig?.route || '/sbm'}`} />
               </div>
             </div>
             <div className={`rounded-[2rem] p-6 ${ui.panel}`}>

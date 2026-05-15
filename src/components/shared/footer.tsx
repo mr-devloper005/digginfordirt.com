@@ -61,9 +61,7 @@ export function Footer() {
   if (isCurationProduct) {
     const archiveLinks = [
       { name: 'Bookmark Archive', href: primaryTask?.route || '/sbm' },
-      { name: 'Collections', href: '/sbm/collections' },
       { name: 'Submit Bookmark', href: '/sbm/submit' },
-      { name: 'Search Archive', href: '/search' },
     ]
 
     return (
@@ -71,22 +69,8 @@ export function Footer() {
         <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
           <div className="grid gap-8 lg:grid-cols-[1.2fr_0.9fr_0.9fr]">
             <div className="archive-panel rounded-[2rem] p-7">
-              <div className="inline-flex items-center gap-2 rounded-full border border-[rgba(83,96,127,0.14)] bg-[#eef1f8] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#53607f]">
-                <Sparkles className="h-3.5 w-3.5" />
-                Research desk
-              </div>
               <h3 className="mt-5 text-3xl font-semibold tracking-[-0.04em]">{SITE_CONFIG.name}</h3>
               <p className="mt-4 max-w-md text-sm leading-7 text-[#53607f]">{SITE_CONFIG.description}</p>
-              <div className="mt-6 grid gap-3 sm:grid-cols-2">
-                <div className="archive-stat rounded-[1.4rem] p-4">
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#7380a0]">Primary emphasis</p>
-                  <p className="mt-2 text-sm font-medium text-[#21283f]">Bookmark archive and collections lead discovery.</p>
-                </div>
-                <div className="archive-stat rounded-[1.4rem] p-4">
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#7380a0]">System rule</p>
-                  <p className="mt-2 text-sm font-medium text-[#21283f]">Other task routes remain available in the platform.</p>
-                </div>
-              </div>
               <Link href={primaryTask?.route || '/sbm'} className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#21283f] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#334264]">
                 Explore archive
                 <ArrowRight className="h-4 w-4" />

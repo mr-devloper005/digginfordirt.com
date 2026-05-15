@@ -185,11 +185,7 @@ export const taskIntroCopy: Record<
       'Bookmarks stay connected to the rest of the platform, so supporting routes remain available without taking over the main visual hierarchy.',
       'Use this archive to collect useful sources, revisit strong references, and move through saved material without losing the thread.',
     ],
-    links: [
-      { label: 'Browse collections', href: '/sbm/collections' },
-      { label: 'Search the archive', href: '/search' },
-      { label: 'Submit a bookmark', href: '/sbm/submit' },
-    ],
+    links: [],
   },
   pdf: {
     title: 'PDFs, documents, and downloadable files',
