@@ -110,33 +110,6 @@ export default async function SearchPage({
           </div>
         ))}
       </div>
-      <div className="mb-8 grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
-        <section className="archive-panel rounded-[2rem] p-6">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#7380a0]">Search desk</p>
-          <h2 className="mt-3 text-3xl font-semibold tracking-[-0.05em] text-[#21283f]">
-            Search the archive like an index, not like a noisy all-content feed.
-          </h2>
-          <p className="mt-4 max-w-2xl text-sm leading-7 text-[#53607f]">
-            Results stay route-aware, but the presentation now feels more curated and deliberate, with clearer scanning cues and bookmark-first visual framing.
-          </p>
-        </section>
-        <section className="grid gap-4">
-          <div className="curation-note rounded-[1.8rem] p-5">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#7380a0]">Try searching for</p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {['design systems', 'frontend tools', 'research', 'collections', 'ai prompts'].map((item) => (
-                <span key={item} className="archive-chip">{item}</span>
-              ))}
-            </div>
-          </div>
-          <div className="archive-panel-muted rounded-[1.8rem] p-5">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#7380a0]">Search behavior</p>
-            <p className="mt-3 text-sm leading-7 text-[#53607f]">
-              Filtering, routing, and result matching stay exactly the same. Only the visual organization and content framing have changed.
-            </p>
-          </div>
-        </section>
-      </div>
       {results.length ? (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {results.map((post) => {

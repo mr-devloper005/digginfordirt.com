@@ -4,12 +4,11 @@ import { useMemo, useState } from 'react'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Search, Menu, X, User, FileText, Building2, LayoutGrid, Tag, Image as ImageIcon, ChevronRight, Sparkles, MapPin, Plus, Bookmark, LibraryBig } from 'lucide-react'
+import { Search, Menu, X, User, FileText, Building2, LayoutGrid, Tag, Image as ImageIcon, ChevronRight, Sparkles, MapPin, Plus, Bookmark } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/lib/auth-context'
 import { SITE_CONFIG, type TaskKey } from '@/lib/site-config'
 import { cn } from '@/lib/utils'
-import { siteContent } from '@/config/site.content'
 import { getFactoryState } from '@/design/factory/get-factory-state'
 import { NAVBAR_OVERRIDE_ENABLED, NavbarOverride } from '@/overrides/navbar'
 
@@ -111,18 +110,11 @@ export function Navbar() {
   if (isCurationProduct) {
     const curationLinks = [
       { label: 'Archive', href: primaryTask?.route || '/sbm', icon: Bookmark },
-      { label: 'Collections', href: '/sbm/collections', icon: LibraryBig },
     ]
     const lowEmphasisRoutes = SITE_CONFIG.tasks.filter((task) => task.enabled && task.key !== 'sbm')
 
     return (
       <header className="sticky top-0 z-50 w-full border-b border-[rgba(83,96,127,0.14)] bg-[rgba(248,243,235,0.84)] text-[#21283f] backdrop-blur-2xl">
-        <div className="border-b border-[rgba(83,96,127,0.08)]">
-          <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-[#53607f] sm:px-6 lg:px-8">
-            <span>Signal archive interface</span>
-            <span className="hidden sm:inline">Primary task: {primaryTask?.label || 'Social Bookmarking'}</span>
-          </div>
-        </div>
         <nav className="mx-auto flex min-h-[5.2rem] max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
           <div className="flex min-w-0 items-center gap-4 lg:gap-8">
             <Link href="/" className="flex shrink-0 items-center gap-3">
@@ -131,7 +123,6 @@ export function Navbar() {
               </div>
               <div className="min-w-0">
                 <span className="block truncate text-xl font-semibold text-[#21283f]">{SITE_CONFIG.name}</span>
-                <span className="block text-[10px] uppercase tracking-[0.26em] text-[#7380a0]">{siteContent.navbar.tagline}</span>
               </div>
             </Link>
 
@@ -253,7 +244,6 @@ export function Navbar() {
               </div>
               <div className="min-w-0 hidden sm:block">
                 <span className="block truncate text-xl font-semibold">{SITE_CONFIG.name}</span>
-                <span className="block text-[10px] uppercase tracking-[0.24em] opacity-60">{siteContent.navbar.tagline}</span>
               </div>
             </Link>
 
@@ -348,7 +338,6 @@ export function Navbar() {
             </div>
             <div className="min-w-0 hidden sm:block">
               <span className="block truncate text-xl font-semibold">{SITE_CONFIG.name}</span>
-              <span className="hidden text-[10px] uppercase tracking-[0.28em] opacity-70 sm:block">{siteContent.navbar.tagline}</span>
             </div>
           </Link>
 

@@ -79,7 +79,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      router.push('/dashboard')
+      router.push('/')
     }
   }, [isAuthenticated, router])
 
@@ -98,7 +98,7 @@ export default function LoginPage() {
         title: 'Signed in',
         description: 'Welcome back to your workspace.',
       })
-      router.push('/dashboard')
+      router.push('/')
     } catch {
       setError('Unable to sign in right now. Please try again.')
     }

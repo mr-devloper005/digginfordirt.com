@@ -1,7 +1,7 @@
 export const siteIdentity = {
   code: process.env.NEXT_PUBLIC_SITE_CODE || 'e6biavwtxx',
   name: process.env.NEXT_PUBLIC_SITE_NAME || 'Digginfordirt',
-  tagline: process.env.NEXT_PUBLIC_SITE_TAGLINE || 'Signal archive for the curious web',
+  tagline: process.env.NEXT_PUBLIC_SITE_TAGLINE || 'Filed for later, found faster',
   description:
     process.env.NEXT_PUBLIC_SITE_DESCRIPTION ||
     'An archival social bookmarking platform for curated links, research trails, and revisitable resource collections.',

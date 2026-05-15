@@ -1,10 +1,16 @@
+ 'use client'
+
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Bookmark, Building2, FileText, Image as ImageIcon, Sparkles } from 'lucide-react'
 import { NavbarShell } from '@/components/shared/navbar-shell'
 import { Footer } from '@/components/shared/footer'
 import { getFactoryState } from '@/design/factory/get-factory-state'
 import { getProductKind } from '@/design/factory/get-product-kind'
 import { REGISTER_PAGE_OVERRIDE_ENABLED, RegisterPageOverride } from '@/overrides/register-page'
+import { useAuth } from '@/lib/auth-context'
+import { useToast } from '@/components/ui/use-toast'
 
 function getRegisterConfig(kind: ReturnType<typeof getProductKind>) {
   if (kind === 'directory') {
@@ -60,10 +66,45 @@ export default function RegisterPage() {
     return <RegisterPageOverride />
   }
 
+  const router = useRouter()
+  const { toast } = useToast()
+  const { signup, isLoading, isAuthenticated } = useAuth()
   const { recipe } = getFactoryState()
   const productKind = getProductKind(recipe)
   const config = getRegisterConfig(productKind)
   const Icon = config.icon
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [goal, setGoal] = useState('')
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push('/')
+    }
+  }, [isAuthenticated, router])
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    setError('')
+
+    if (!name.trim() || !email.trim() || !password.trim()) {
+      setError('Name, email, and password are required.')
+      return
+    }
+
+    try {
+      await signup(name.trim(), email.trim(), password)
+      toast({
+        title: 'Account created',
+        description: goal.trim() ? `Great start: ${goal.trim()}` : 'Welcome to your new workspace.',
+      })
+      router.push('/')
+    } catch {
+      setError('Unable to create account right now. Please try again.')
+    }
+  }
 
   return (
     <div className={`min-h-screen ${config.shell}`}>
@@ -83,12 +124,44 @@ export default function RegisterPage() {
 
           <div className={`rounded-[2rem] p-8 ${config.panel}`}>
             <p className="text-xs font-semibold uppercase tracking-[0.24em] opacity-70">Create account</p>
-            <form className="mt-6 grid gap-4">
-              <input className="h-12 rounded-xl border border-current/10 bg-transparent px-4 text-sm" placeholder="Full name" />
-              <input className="h-12 rounded-xl border border-current/10 bg-transparent px-4 text-sm" placeholder="Email address" />
-              <input className="h-12 rounded-xl border border-current/10 bg-transparent px-4 text-sm" placeholder="Password" type="password" />
-              <input className="h-12 rounded-xl border border-current/10 bg-transparent px-4 text-sm" placeholder="What are you creating or publishing?" />
-              <button type="submit" className={`inline-flex h-12 items-center justify-center rounded-full px-6 text-sm font-semibold ${config.action}`}>Create account</button>
+            <form className="mt-6 grid gap-4" onSubmit={handleSubmit}>
+              <input
+                className="h-12 rounded-xl border border-current/10 bg-transparent px-4 text-sm"
+                placeholder="Full name"
+                autoComplete="name"
+                value={name}
+                onChange={(event) => setName(event.target.value)}
+              />
+              <input
+                className="h-12 rounded-xl border border-current/10 bg-transparent px-4 text-sm"
+                placeholder="Email address"
+                type="email"
+                autoComplete="email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+              />
+              <input
+                className="h-12 rounded-xl border border-current/10 bg-transparent px-4 text-sm"
+                placeholder="Password"
+                type="password"
+                autoComplete="new-password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+              />
+              <input
+                className="h-12 rounded-xl border border-current/10 bg-transparent px-4 text-sm"
+                placeholder="What are you creating or publishing?"
+                value={goal}
+                onChange={(event) => setGoal(event.target.value)}
+              />
+              {error ? <p className={`text-sm ${config.muted}`}>{error}</p> : null}
+              <button
+                type="submit"
+                disabled={isLoading}
+                className={`inline-flex h-12 items-center justify-center rounded-full px-6 text-sm font-semibold ${config.action} disabled:cursor-not-allowed disabled:opacity-70`}
+              >
+                {isLoading ? 'Creating account...' : 'Create account'}
+              </button>
             </form>
             <div className={`mt-6 flex items-center justify-between text-sm ${config.muted}`}>
               <span>Already have an account?</span>
