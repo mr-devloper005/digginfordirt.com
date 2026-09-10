@@ -69,7 +69,7 @@ export const fetchTaskPostBySlug = async (task: TaskKey, slug: string) => {
   const type = getTaskContentType(task);
 
   try {
-    const directMatch = await fetchSitePostBySlug<SitePost>(slug, { task: type });
+    const directMatch = await fetchSitePostBySlug<SitePost>(slug, { task: type, fresh: true });
     if (directMatch?.post) return directMatch.post;
 
     const freshDirectMatch = await fetchSitePostBySlug<SitePost>(slug, { task: type, fresh: true });
