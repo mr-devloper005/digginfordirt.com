@@ -47,14 +47,42 @@ const getPublicUrl = (path: string) => {
   return `${API_BASE.replace(/\/$/, "")}/api/v1/public/${SITE_CODE}${path}`;
 };
 
-async function fetchPublicJson<T>(path: string, options?: { fresh?: boolean }): Promise<T | null> {
+const STALE_FALLBACK_SECONDS = (() => {
+  const parsed = Number(process.env.NEXT_PUBLIC_STALE_FALLBACK_SECONDS ?? 86400);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : 86400;
+})();
+
+const memoryFallback = new Map<string, { data: unknown; savedAt: number }>();
+
+const saveMemoryFallback = (key: string, data: unknown) => {
+  memoryFallback.set(key, { data, savedAt: Date.now() });
+};
+
+const readMemoryFallback = <T>(key: string): T | null => {
+  const cached = memoryFallback.get(key);
+  if (!cached) return null;
+  const ageSeconds = (Date.now() - cached.savedAt) / 1000;
+  if (ageSeconds > STALE_FALLBACK_SECONDS) return null;
+  return cached.data as T;
+};
+
+// Returns the payload AND the upstream HTTP status. The in-memory fallback is an
+// OUTAGE-resilience feature (keep serving last-known-good while the master blips) and
+// must NEVER resurrect content the master has deliberately removed: on a 404/410 we
+// drop any held fallback and report the resource as gone; the fallback is served only
+// for transient failures (5xx/429/network error/timeout) so backlinks don't 404 when
+// the master panel hiccups.
+async function fetchPublicJsonEx<T>(
+  path: string,
+  options?: { fresh?: boolean; timeoutMs?: number }
+): Promise<{ data: T | null; status: number | null }> {
   const target = getPublicUrl(path);
-  if (!target) return null;
+  if (!target) return { data: null, status: null };
 
   try {
     const signal =
       typeof AbortSignal !== "undefined" && typeof AbortSignal.timeout === "function"
-        ? AbortSignal.timeout(REQUEST_TIMEOUT_MS)
+        ? AbortSignal.timeout(options?.timeoutMs || REQUEST_TIMEOUT_MS)
         : undefined;
     const response = await fetch(target, {
       method: "GET",
@@ -64,20 +92,30 @@ async function fetchPublicJson<T>(path: string, options?: { fresh?: boolean }): 
     });
 
     if (!response.ok) {
+      if (response.status === 404 || response.status === 410) {
+        memoryFallback.delete(target);
+        return { data: null, status: response.status };
+      }
       if (process.env.NODE_ENV !== "production") {
         console.warn(`Public connector request failed (${response.status}) for ${target}`);
       }
-      return null;
+      return { data: readMemoryFallback<T>(target), status: response.status };
     }
 
     const json = (await response.json()) as { success: boolean; data?: T };
-    return json.data || null;
+    const data = json.data || null;
+    if (data) saveMemoryFallback(target, data);
+    return { data, status: response.status };
   } catch (error) {
-    if (process.env.NODE_ENV !== "production") {
+    if (process.env.NODE_ENV !== "production" && !(error instanceof DOMException && error.name === "TimeoutError")) {
       console.warn("Public connector request failed", error);
     }
-    return null;
+    return { data: readMemoryFallback<T>(target), status: null };
   }
+}
+
+async function fetchPublicJson<T>(path: string, options?: { fresh?: boolean; timeoutMs?: number }): Promise<T | null> {
+  return (await fetchPublicJsonEx<T>(path, options)).data;
 }
 
 export async function fetchSiteBootstrap(options?: { fresh?: boolean }): Promise<SiteBootstrap | null> {
